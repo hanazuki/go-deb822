@@ -35,9 +35,9 @@ func expectEof(t *testing.T, scanner *Scanner) {
 func TestScannerSingle(t *testing.T) {
 	s := `Package: pui
 Version: 1.1
-Description: a
- b
- c
+Description: a 
+  b
+ c 
 `
 
 	scanner := New(strings.NewReader(s))
