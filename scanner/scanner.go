@@ -49,7 +49,7 @@ func New(source io.Reader) *Scanner {
 var (
 	reEmpty   = regexp.MustCompile(`\A[ \t]*\z`)
 	reComment = regexp.MustCompile(`\A#(?P<value>.*)\z`)
-	reFiled   = regexp.MustCompile(`\A(?P<name>` + deb822.FieldNamePattern + `):[ \t]*(?P<value>.*?)[ \t]*\z`)
+	reField   = regexp.MustCompile(`\A(?P<name>` + deb822.FieldNamePattern + `):[ \t]*(?P<value>.*?)[ \t]*\z`)
 	reCont    = regexp.MustCompile(`\A[ \t]+(?P<value>.*?)[ \t]*\z`)
 )
 
@@ -86,7 +86,7 @@ func (s *Scanner) Next() (*Line, error) {
 			}, nil
 		}
 
-		if m := reFiled.FindStringSubmatch(line); m != nil {
+		if m := reField.FindStringSubmatch(line); m != nil {
 			s.inParagraph = true
 			return &Line{
 				Type:  T_FIELD,
