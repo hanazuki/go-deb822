@@ -48,10 +48,10 @@ func New(source io.Reader) *Scanner {
 }
 
 var (
-	RE_EMPTY   = regexp.MustCompile("\\A[ \t]*\\z")
-	RE_COMMENT = regexp.MustCompile("\\A#(?P<value>.*)\\z")
-	RE_FIELD   = regexp.MustCompile("\\A(?P<name>" + deb822.FieldNamePattern + "):[ \t]*(?P<value>.*)\\z")
-	RE_CONT    = regexp.MustCompile("\\A[ \t](?P<value>.*)\\z")
+	RE_EMPTY   = regexp.MustCompile(`\A[ \t]*\z`)
+	RE_COMMENT = regexp.MustCompile(`\A#(?P<value>.*)\z`)
+	RE_FIELD   = regexp.MustCompile(`\A(?P<name>` + deb822.FieldNamePattern + `):[ \t]*(?P<value>.*)\z`)
+	RE_CONT    = regexp.MustCompile(`\A[ \t](?P<value>.*)\z`)
 )
 
 func (s *Scanner) Next() (*Line, error) {
