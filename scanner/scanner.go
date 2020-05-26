@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"regexp"
-	"strings"
 
 	"github.com/hanazuki/go-deb822"
 )
@@ -20,7 +19,7 @@ const (
 )
 
 type Scanner struct {
-	LineScanner *bufio.Scanner
+	Reader      *bufio.Reader
 	inParagraph bool
 	position    int
 }
@@ -43,7 +42,7 @@ func (e *ScanError) Error() string {
 
 func New(source io.Reader) *Scanner {
 	return &Scanner{
-		LineScanner: bufio.NewScanner(source),
+		Reader: bufio.NewReader(source),
 	}
 }
 
@@ -56,15 +55,18 @@ var (
 
 func (s *Scanner) Next() (*Line, error) {
 	for {
-		if !s.LineScanner.Scan() {
-			err := s.LineScanner.Err()
-			if err != nil {
-				return nil, err
+		line, err := s.Reader.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				return nil, nil
 			}
-			return nil, nil
+			return nil, err
 		}
+		if line[len(line)-1] != '\n' {
+			return nil, &ScanError{Line: s.position, Message: "Unexpected EOF", Source: line}
+		}
+		line = line[:len(line)-1] // chomp NL
 
-		line := strings.TrimSuffix(s.LineScanner.Text(), "\n")
 		s.position += 1
 
 		if RE_EMPTY.MatchString(line) {
