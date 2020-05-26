@@ -47,10 +47,10 @@ func New(source io.Reader) *Scanner {
 }
 
 var (
-	RE_EMPTY   = regexp.MustCompile(`\A[ \t]*\z`)
-	RE_COMMENT = regexp.MustCompile(`\A#(?P<value>.*)\z`)
-	RE_FIELD   = regexp.MustCompile(`\A(?P<name>` + deb822.FieldNamePattern + `):[ \t]*(?P<value>.*)\z`)
-	RE_CONT    = regexp.MustCompile(`\A[ \t](?P<value>.*)\z`)
+	reEmpty   = regexp.MustCompile(`\A[ \t]*\z`)
+	reComment = regexp.MustCompile(`\A#(?P<value>.*)\z`)
+	reFiled   = regexp.MustCompile(`\A(?P<name>` + deb822.FieldNamePattern + `):[ \t]*(?P<value>.*)\z`)
+	reCont    = regexp.MustCompile(`\A[ \t](?P<value>.*)\z`)
 )
 
 func (s *Scanner) Next() (*Line, error) {
@@ -69,7 +69,7 @@ func (s *Scanner) Next() (*Line, error) {
 
 		s.position += 1
 
-		if RE_EMPTY.MatchString(line) {
+		if reEmpty.MatchString(line) {
 			if s.inParagraph {
 				s.inParagraph = false
 				return &Line{
@@ -79,14 +79,14 @@ func (s *Scanner) Next() (*Line, error) {
 			continue
 		}
 
-		if m := RE_COMMENT.FindStringSubmatch(line); m != nil {
+		if m := reComment.FindStringSubmatch(line); m != nil {
 			return &Line{
 				Type:  T_COMMENT,
 				Value: m[1],
 			}, nil
 		}
 
-		if m := RE_FIELD.FindStringSubmatch(line); m != nil {
+		if m := reFiled.FindStringSubmatch(line); m != nil {
 			s.inParagraph = true
 			return &Line{
 				Type:  T_FIELD,
@@ -95,7 +95,7 @@ func (s *Scanner) Next() (*Line, error) {
 			}, nil
 		}
 
-		if m := RE_CONT.FindStringSubmatch(line); m != nil {
+		if m := reCont.FindStringSubmatch(line); m != nil {
 			if !s.inParagraph {
 				return nil, &ScanError{Line: s.position, Message: "Unexpected continuation line", Source: line}
 			}
