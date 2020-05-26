@@ -20,7 +20,7 @@ func New(source io.Reader) Parser {
 
 func (p *Parser) NextParagraph() (*deb822.Paragraph, error) {
 	var (
-		fields     []deb822.Field
+		paragraph  *deb822.Paragraph
 		fieldName  string
 		fieldValue strings.Builder
 	)
@@ -33,7 +33,10 @@ func (p *Parser) NextParagraph() (*deb822.Paragraph, error) {
 			}
 			fieldName = ""
 
-			fields = append(fields, field)
+			if paragraph == nil {
+				paragraph = deb822.MustNewParagraph()
+			}
+			paragraph.Add(field)
 		}
 		return nil
 	}
@@ -92,8 +95,5 @@ Loop:
 		return nil, err
 	}
 
-	if len(fields) == 0 {
-		return nil, nil
-	}
-	return &deb822.Paragraph{Fields: fields}, nil
+	return paragraph, nil
 }
