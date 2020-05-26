@@ -3,9 +3,11 @@ package parser
 import (
 	"strings"
 	"testing"
+
+	"github.com/hanazuki/go-deb822"
 )
 
-func expectFields(t *testing.T, paragraph *Paragraph, nvPairs ...string) {
+func expectFields(t *testing.T, paragraph *deb822.Paragraph, nvPairs ...string) {
 	if len(nvPairs)%2 != 0 {
 		panic("nvPairs must contain even number of strings")
 	}

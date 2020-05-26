@@ -12,17 +12,13 @@ type Parser struct {
 	scanner *scanner.Scanner
 }
 
-type Paragraph struct {
-	Fields []deb822.Field
-}
-
 func New(source io.Reader) Parser {
 	return Parser{
 		scanner: scanner.New(source),
 	}
 }
 
-func (p *Parser) NextParagraph() (*Paragraph, error) {
+func (p *Parser) NextParagraph() (*deb822.Paragraph, error) {
 	var (
 		fields     []deb822.Field
 		fieldName  string
@@ -99,5 +95,5 @@ Loop:
 	if len(fields) == 0 {
 		return nil, nil
 	}
-	return &Paragraph{Fields: fields}, nil
+	return &deb822.Paragraph{Fields: fields}, nil
 }
