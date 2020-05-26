@@ -97,3 +97,16 @@ Loop:
 
 	return paragraph, nil
 }
+
+func (p *Parser) ConsumeAll() error {
+	for {
+		paragraph, err := p.NextParagraph()
+		if err != nil {
+			return err
+		}
+
+		if paragraph == nil {
+			return nil
+		}
+	}
+}
