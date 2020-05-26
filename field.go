@@ -3,6 +3,7 @@ package deb822
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 const (
@@ -40,4 +41,34 @@ func MustNewField(name, value string) Field {
 	}
 
 	return field
+}
+
+func EscapeFieldValue(value string) string {
+	lines := strings.Split(value, "\n")
+	for i, line := range lines {
+		if i == 0 {
+			continue
+		}
+
+		if line == "" {
+			lines[i] = "."
+		} else if line[0] == '.' {
+			lines[i] = "." + line
+		}
+	}
+	return strings.Join(lines, "\n")
+}
+
+func UnescapeFieldValue(value string) string {
+	lines := strings.Split(value, "\n")
+	for i, line := range lines {
+		if i == 0 {
+			continue
+		}
+
+		if line[0] == '.' {
+			lines[i] = line[1:]
+		}
+	}
+	return strings.Join(lines, "\n")
 }
